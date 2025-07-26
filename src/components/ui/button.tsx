@@ -12,7 +12,7 @@ interface IButtonComponent {
   children: string | JSX.Element | JSX.Element[];
 }
 
-export const Button = forwardRef<HTMLButtonElement, IButtonComponent>(function ButtonComponent(
+export const Button = forwardRef<HTMLButtonElement, IButtonComponent>((
   {
     isFullWidth = false,
     type = 'button',
@@ -24,7 +24,7 @@ export const Button = forwardRef<HTMLButtonElement, IButtonComponent>(function B
     children,
   },
   ref,
-) {
+) => {
   let btnClassName = `disabled:cursor-not-allowed disabled:opacity-70 font-semibold text-base not-italic rounded-lg border-solid border box-border flex flex-row items-center justify-center h-10 py-2.5 px-4 gap-2 ${className}`;
   btnClassName += ` ${isFullWidth ? 'w-full' : ''}`;
 
