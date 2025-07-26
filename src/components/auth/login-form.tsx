@@ -1,16 +1,13 @@
 'use client';
 
-import { useActionState } from 'react';
 import Link from 'next/link';
-import { login } from '@/actions/auth';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 
 export function LoginForm() {
-  const [, formAction, pending] = useActionState(login, null);
 
   return (
-    <form action={formAction} className="space-y-6">
+    <form className="space-y-6">
       <div className="space-y-4">
         <div>
           <Input
@@ -34,8 +31,8 @@ export function LoginForm() {
         </div>
       </div>
 
-      <Button type="submit" className="w-full" disabled={pending}>
-        {pending ? 'Signing In...' : 'Sign In'}
+      <Button type="submit" className="w-full">
+        Sign In
       </Button>
 
       <p className="text-center text-sm text-gray-600">
