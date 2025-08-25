@@ -1,16 +1,20 @@
 'use client';
 
-import Link from 'next/link';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { signIn } from '@/actions/auth';
+import { resetPassword } from '@/actions/auth';
 import { useToast } from '@/stores';
-import { loginSchema, type LoginFormData } from '@/schemas/auth';
+import { passwordResetSchema, type PasswordResetData } from '@/schemas/auth';
 
-export function LoginForm() {
+interface PasswordResetFormProps {
+  token: string;
+  onSuccess?: () => void;
+}
+
+export function PasswordResetForm({ token, onSuccess }: PasswordResetFormProps) {
   const [isLoading, setIsLoading] = useState(false);
   const { showToast } = useToast();
   
@@ -19,23 +23,26 @@ export function LoginForm() {
     handleSubmit,
     formState: { errors },
     reset,
-  } = useForm<LoginFormData>({
-    resolver: zodResolver(loginSchema),
+  } = useForm<PasswordResetData>({
+    resolver: zodResolver(passwordResetSchema),
+    defaultValues: {
+      token,
+    },
   });
 
-  async function onSubmit(data: LoginFormData) {
+  async function onSubmit(data: PasswordResetData) {
     setIsLoading(true);
     try {
       const formData = new FormData();
-      formData.append('email', data.email);
+      formData.append('token', data.token);
       formData.append('password', data.password);
       
-      const result = await signIn(formData);
+      const result = await resetPassword(formData);
       if (result?.errors) {
         if (result.errors.general) {
           showToast({
             type: 'error',
-            title: 'Login Failed',
+            title: 'Reset Failed',
             message: result.errors.general,
           });
         }
@@ -43,15 +50,16 @@ export function LoginForm() {
         showToast({
           type: 'success',
           title: 'Success',
-          message: 'Successfully logged in!',
+          message: 'Password reset successfully! You can now sign in.',
         });
         reset();
+        onSuccess?.();
       }
     } catch(error) {
       console.error(error);
       showToast({
         type: 'error',
-        title: 'Login Failed',
+        title: 'Reset Failed',
         message: 'Something went wrong. Please try again.',
       });
     } finally {
@@ -60,46 +68,38 @@ export function LoginForm() {
   }
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">      
+    <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+      <input type="hidden" {...register('token')} />
+      
       <div className="space-y-4">
-        <div>
-          <Input
-            id="email"
-            type="email"
-            label="Email"
-            className="mt-1"
-            {...register('email')}
-            error={errors.email?.message}
-          />
-        </div>
         <div>
           <Input
             id="password"
             type="password"
-            label="Password"
+            label="New Password"
             className="mt-1"
+            placeholder="Enter your new password"
             {...register('password')}
             error={errors.password?.message}
+          />
+        </div>
+        
+        <div>
+          <Input
+            id="confirmPassword"
+            type="password"
+            label="Confirm Password"
+            className="mt-1"
+            placeholder="Confirm your new password"
+            {...register('confirmPassword')}
+            error={errors.confirmPassword?.message}
           />
         </div>
       </div>
 
       <Button type="submit" className="w-full" disabled={isLoading}>
-        {isLoading ? 'Signing In...' : 'Sign In'}
+        {isLoading ? 'Resetting...' : 'Reset Password'}
       </Button>
-
-      <div className="text-center">
-        <Link href="/auth/forgot-password" className="text-sm text-blue-600 hover:underline">
-          Forgot your password?
-        </Link>
-      </div>
-
-      <p className="text-center text-sm text-gray-600">
-        Don&apos;t have an account?{' '}
-        <Link href="/signup" className="text-blue-600 hover:underline">
-          Create one
-        </Link>
-      </p>
     </form>
   );
 }

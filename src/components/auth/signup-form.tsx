@@ -4,38 +4,42 @@ import Link from 'next/link';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { signIn } from '@/actions/auth';
+import { signUp } from '@/actions/auth';
 import { useToast } from '@/stores';
-import { loginSchema, type LoginFormData } from '@/schemas/auth';
+import { signupFormSchema, type SignupFormData } from '@/schemas/auth';
 
-export function LoginForm() {
+export function SignupForm() {
   const [isLoading, setIsLoading] = useState(false);
   const { showToast } = useToast();
+  const router = useRouter();
   
   const {
     register,
     handleSubmit,
     formState: { errors },
     reset,
-  } = useForm<LoginFormData>({
-    resolver: zodResolver(loginSchema),
+  } = useForm<SignupFormData>({
+    resolver: zodResolver(signupFormSchema),
   });
 
-  async function onSubmit(data: LoginFormData) {
+  async function onSubmit(data: SignupFormData) {
     setIsLoading(true);
     try {
       const formData = new FormData();
+      formData.append('full_name', data.full_name);
+      formData.append('user_name', data.user_name);
       formData.append('email', data.email);
       formData.append('password', data.password);
       
-      const result = await signIn(formData);
+      const result = await signUp(formData);
       if (result?.errors) {
         if (result.errors.general) {
           showToast({
             type: 'error',
-            title: 'Login Failed',
+            title: 'Registration Failed',
             message: result.errors.general,
           });
         }
@@ -43,15 +47,17 @@ export function LoginForm() {
         showToast({
           type: 'success',
           title: 'Success',
-          message: 'Successfully logged in!',
+          message: 'Account created successfully! Please check your email for verification.',
         });
         reset();
+        // Redirect to OTP verification page with email parameter
+        router.push(`/auth/verify-otp?email=${encodeURIComponent(data.email)}`);
       }
     } catch(error) {
       console.error(error);
       showToast({
         type: 'error',
-        title: 'Login Failed',
+        title: 'Registration Failed',
         message: 'Something went wrong. Please try again.',
       });
     } finally {
@@ -64,6 +70,28 @@ export function LoginForm() {
       <div className="space-y-4">
         <div>
           <Input
+            id="full_name"
+            type="text"
+            label="Full Name"
+            className="mt-1"
+            {...register('full_name')}
+            error={errors.full_name?.message}
+          />
+        </div>
+        
+        <div>
+          <Input
+            id="user_name"
+            type="text"
+            label="Username"
+            className="mt-1"
+            {...register('user_name')}
+            error={errors.user_name?.message}
+          />
+        </div>
+        
+        <div>
+          <Input
             id="email"
             type="email"
             label="Email"
@@ -72,6 +100,7 @@ export function LoginForm() {
             error={errors.email?.message}
           />
         </div>
+        
         <div>
           <Input
             id="password"
@@ -82,22 +111,27 @@ export function LoginForm() {
             error={errors.password?.message}
           />
         </div>
+        
+        <div>
+          <Input
+            id="confirmPassword"
+            type="password"
+            label="Confirm Password"
+            className="mt-1"
+            {...register('confirmPassword')}
+            error={errors.confirmPassword?.message}
+          />
+        </div>
       </div>
 
       <Button type="submit" className="w-full" disabled={isLoading}>
-        {isLoading ? 'Signing In...' : 'Sign In'}
+        {isLoading ? 'Creating Account...' : 'Create Account'}
       </Button>
 
-      <div className="text-center">
-        <Link href="/auth/forgot-password" className="text-sm text-blue-600 hover:underline">
-          Forgot your password?
-        </Link>
-      </div>
-
       <p className="text-center text-sm text-gray-600">
-        Don&apos;t have an account?{' '}
-        <Link href="/signup" className="text-blue-600 hover:underline">
-          Create one
+        Already have an account?{' '}
+        <Link href="/login" className="text-blue-600 hover:underline">
+          Sign in
         </Link>
       </p>
     </form>
