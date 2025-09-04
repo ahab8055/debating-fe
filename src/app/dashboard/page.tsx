@@ -4,10 +4,14 @@ import { Button } from '@/components/ui/button';
 export default async function DashboardPage() {
   const user = await getCurrentUser();
 
+  console.log('Current user:', user);
+
+  // If user is not found, show a loading state (this should be rare due to middleware redirect)
+
   if (!user) {
     return (
       <div className="min-h-screen flex items-center justify-center">
-        <p>Please log in to access the dashboard.</p>
+        <p>Loading...</p>
       </div>
     );
   }
@@ -24,7 +28,7 @@ export default async function DashboardPage() {
               </p>
             </div>
             <form action={logout}>
-              <Button type="submit" className="border-gray-300 text-gray-700 hover:bg-gray-50">
+              <Button type="submit" className="border-gray-300 text-gray-200 hover:text-gray-700 hover:bg-gray-50">
                 Logout
               </Button>
             </form>

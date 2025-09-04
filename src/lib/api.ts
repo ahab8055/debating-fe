@@ -11,20 +11,7 @@ const apiClient: AxiosInstance = axios.create({
 
 // Request interceptor to add auth token
 apiClient.interceptors.request.use(
-  (config) => {
-    // If we're in a browser environment and have a token
-    if (typeof window !== 'undefined') {
-      const token = document.cookie
-        .split('; ')
-        .find(row => row.startsWith('session='))
-        ?.split('=')[1];
-      
-      if (token && config.headers) {
-        config.headers.Authorization = `Bearer ${token}`;
-      }
-    }
-    return config;
-  },
+  (config) => config, // For client-side requests, session is handled by server-side API routes
   (error) => Promise.reject(error)
 );
 
@@ -32,14 +19,7 @@ apiClient.interceptors.request.use(
 apiClient.interceptors.response.use(
   (response: AxiosResponse) => response,
   (error) => {
-    // Handle common errors
-    if (error.response?.status === 401) {
-      // Unauthorized - redirect to login if in browser
-      if (typeof window !== 'undefined') {
-        window.location.href = '/auth/login';
-      }
-    }
-    
+    console.warn('API error response:', error.response);
     // Return a more user-friendly error format
     const errorMessage = error.response?.data?.detail || 
                         error.response?.data?.message || 

@@ -2,10 +2,10 @@ import { z } from 'zod';
 
 // Login form schema
 export const loginSchema = z.object({
-  email: z
+  username: z
     .string()
-    .min(1, 'Email is required')
-    .email('Please enter a valid email address'),
+    .min(1, 'Username is required')
+    .min(2, 'Username must be at least 2 characters long'),
   password: z
     .string()
     .min(1, 'Password is required')
@@ -19,7 +19,7 @@ export const signupFormSchema = z.object({
     .min(1, 'Full name is required')
     .min(2, 'Full name must be at least 2 characters long')
     .max(100, 'Full name must be less than 100 characters'),
-  user_name: z
+  username: z
     .string()
     .min(1, 'Username is required')
     .min(3, 'Username must be at least 3 characters long')
@@ -47,7 +47,7 @@ export const signupSchema = z.object({
     .min(1, 'Full name is required')
     .min(2, 'Full name must be at least 2 characters long')
     .max(100, 'Full name must be less than 100 characters'),
-  user_name: z
+  username: z
     .string()
     .min(1, 'Username is required')
     .min(3, 'Username must be at least 3 characters long')

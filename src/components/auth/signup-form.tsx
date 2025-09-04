@@ -4,7 +4,6 @@ import Link from 'next/link';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { signUp } from '@/actions/auth';
@@ -14,7 +13,6 @@ import { signupFormSchema, type SignupFormData } from '@/schemas/auth';
 export function SignupForm() {
   const [isLoading, setIsLoading] = useState(false);
   const { showToast } = useToast();
-  const router = useRouter();
   
   const {
     register,
@@ -28,13 +26,7 @@ export function SignupForm() {
   async function onSubmit(data: SignupFormData) {
     setIsLoading(true);
     try {
-      const formData = new FormData();
-      formData.append('full_name', data.full_name);
-      formData.append('user_name', data.user_name);
-      formData.append('email', data.email);
-      formData.append('password', data.password);
-      
-      const result = await signUp(formData);
+      const result = await signUp(data);
       if (result?.errors) {
         if (result.errors.general) {
           showToast({
@@ -43,15 +35,15 @@ export function SignupForm() {
             message: result.errors.general,
           });
         }
-      } else {
+      } else if (result?.success) {
         showToast({
           type: 'success',
           title: 'Success',
           message: 'Account created successfully! Please check your email for verification.',
         });
         reset();
-        // Redirect to OTP verification page with email parameter
-        router.push(`/auth/verify-otp?email=${encodeURIComponent(data.email)}`);
+        // Redirect to OTP verification page (email is stored securely server-side)
+        window.location.href = '/auth/verify-otp';
       }
     } catch(error) {
       console.error(error);
@@ -81,12 +73,12 @@ export function SignupForm() {
         
         <div>
           <Input
-            id="user_name"
+            id="username"
             type="text"
             label="Username"
             className="mt-1"
-            {...register('user_name')}
-            error={errors.user_name?.message}
+            {...register('username')}
+            error={errors.username?.message}
           />
         </div>
         
@@ -130,7 +122,7 @@ export function SignupForm() {
 
       <p className="text-center text-sm text-gray-600">
         Already have an account?{' '}
-        <Link href="/login" className="text-blue-600 hover:underline">
+        <Link href="/auth/login" className="text-blue-600 hover:underline">
           Sign in
         </Link>
       </p>
