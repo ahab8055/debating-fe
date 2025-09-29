@@ -26,11 +26,8 @@ export function LoginForm() {
   async function onSubmit(data: LoginFormData) {
     setIsLoading(true);
     try {
-      const formData = new FormData();
-      formData.append('email', data.email);
-      formData.append('password', data.password);
-      
-      const result = await signIn(formData);
+      const result = await signIn(data);
+      console.warn('Login result:', result);
       if (result?.errors) {
         if (result.errors.general) {
           showToast({
@@ -39,16 +36,19 @@ export function LoginForm() {
             message: result.errors.general,
           });
         }
-      } else {
+      } else if (result?.success) {
         showToast({
           type: 'success',
           title: 'Success',
           message: 'Successfully logged in!',
         });
         reset();
+        
+        // Force a full page navigation to ensure middleware picks up the session
+        window.location.href = '/dashboard';
       }
     } catch(error) {
-      console.error(error);
+      console.warn(error);
       showToast({
         type: 'error',
         title: 'Login Failed',
@@ -64,12 +64,12 @@ export function LoginForm() {
       <div className="space-y-4">
         <div>
           <Input
-            id="email"
-            type="email"
-            label="Email"
+            id="username"
+            type="text"
+            label="Username"
             className="mt-1"
-            {...register('email')}
-            error={errors.email?.message}
+            {...register('username')}
+            error={errors.username?.message}
           />
         </div>
         <div>
@@ -96,7 +96,7 @@ export function LoginForm() {
 
       <p className="text-center text-sm text-gray-600">
         Don&apos;t have an account?{' '}
-        <Link href="/signup" className="text-blue-600 hover:underline">
+        <Link href="/auth/signup" className="text-blue-600 hover:underline">
           Create one
         </Link>
       </p>

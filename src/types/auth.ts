@@ -43,10 +43,12 @@ export interface AuthFormState {
     password?: string;
     confirmPassword?: string;
     full_name?: string;
-    user_name?: string;
+    username?: string;
     general?: string;
   };
   message?: string;
+  success?: boolean;
+  email?: string; // For OTP verification redirect
 }
 
 // API error response

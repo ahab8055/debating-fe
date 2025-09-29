@@ -12,8 +12,9 @@ export async function GET() {
       return NextResponse.json({ error: 'No session found' }, { status: 401 });
     }
 
-    const user = await serverApi.get<User>('/auth/me', session);
-    return NextResponse.json(user);
+    // The serverApi.get returns the User object from the backend's /auth/me endpoint
+    const response = await serverApi.get<{ User: User }>('/auth/me', session);
+    return NextResponse.json(response.User);
   } catch (error) {
     // Clear invalid session
     const cookieStore = await cookies();

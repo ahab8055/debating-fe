@@ -1,3 +1,5 @@
+'use client';
+
 import React, { forwardRef, JSX } from 'react';
 
 interface IButtonComponent {

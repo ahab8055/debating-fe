@@ -51,8 +51,7 @@ export const useAuthStore = create<AuthStore>()(
           set({ isLoading: true }, false, 'checkAuthStatus/start');
           
           try {
-            const response = await api.get('/api/auth/me') as { data: User };
-            const user = response.data;
+            const user = await api.get<User>('/api/auth/me');
             
             set(
               {
