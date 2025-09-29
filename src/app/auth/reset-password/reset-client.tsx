@@ -49,15 +49,15 @@ export function PasswordResetClient() {
 
   if (!isValidToken) {
     return (
-      <div className="bg-white p-8 rounded-lg shadow-md text-center">
+      <div className="text-center space-y-6">
         <div className="mb-6">
           <svg className="mx-auto h-12 w-12 text-red-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 16.5c-.77.833.192 2.5 1.732 2.5z" />
           </svg>
         </div>
         
-        <h2 className="text-xl font-semibold text-gray-900 mb-4">Invalid Reset Link</h2>
-        <p className="text-gray-600 mb-6">
+        <h2 className="text-xl font-semibold text-gray-900 dark:text-gray-100 mb-4">Invalid Reset Link</h2>
+        <p className="text-gray-600 dark:text-gray-400 mb-6">
           This password reset link is invalid or has expired. Please request a new one.
         </p>
         
@@ -80,24 +80,24 @@ export function PasswordResetClient() {
   }
 
   return (
-    <div className="bg-white p-8 rounded-lg shadow-md">
+    <div className="space-y-8">
       <div className="mb-8">
         <Link href="/auth/login" className="text-blue-600 hover:underline text-sm">
           ← Back to Sign In
         </Link>
       </div>
 
-      <div className="text-center mb-8">
-        <h2 className="text-2xl font-bold text-gray-900">Set New Password</h2>
-        <p className="mt-2 text-gray-600">
+      <div className="text-center">
+        <h2 className="text-3xl font-bold text-gray-900 dark:text-gray-100">Set New Password</h2>
+        <p className="mt-2 text-gray-600 dark:text-gray-50">
           Enter a new password for your account.
         </p>
       </div>
 
       <PasswordResetForm token={token} onSuccess={handleSuccess} />
 
-      <div className="mt-8 text-center">
-        <p className="text-sm text-gray-600">
+      <div className="text-center">
+        <p className="text-sm text-gray-600 dark:text-gray-400">
           Having trouble?{' '}
           <Link href="/support" className="text-blue-600 hover:underline">
             Contact Support

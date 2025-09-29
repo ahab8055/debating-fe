@@ -105,7 +105,6 @@ export function PasswordResetRequestForm() {
             type="email"
             label="Email Address"
             className="mt-1"
-            placeholder="Enter your email address"
             {...register('email')}
             error={errors.email?.message}
           />

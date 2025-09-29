@@ -97,15 +97,22 @@ export async function signIn(formData: { username: string; password: string }): 
   } catch (error) {
     return {
       errors: {
-        general: error instanceof Error ? error.message : 'Invalid email or password. Please try again.',
+        general:
+          error instanceof Error ? error.message : 'Invalid email or password. Please try again.',
       },
     };
   }
 }
 
 // Sign up action
-export async function signUp(formData: { full_name: string; username: string; email: string; password: string; confirmPassword: string }): Promise<AuthFormState | undefined> {
-  const { full_name, username, email, password, confirmPassword } = formData;
+export async function signUp(data: {
+  full_name: string;
+  user_name: string;
+  email: string;
+  password: string;
+}): Promise<AuthFormState | undefined> {
+  const { full_name, user_name, email, password } = data;
+
   // Validation
   const errors: AuthFormState['errors'] = {};
 
@@ -113,7 +120,7 @@ export async function signUp(formData: { full_name: string; username: string; em
     errors.full_name = 'Full name must be at least 2 characters long';
   }
 
-  if (!username || username.trim().length < 2) {
+  if (!user_name || user_name.trim().length < 2) {
     errors.username = 'Username must be at least 2 characters long';
   }
 
@@ -125,10 +132,6 @@ export async function signUp(formData: { full_name: string; username: string; em
     errors.password = 'Password must be at least 8 characters long';
   }
 
-  if (password !== confirmPassword) {
-    errors.confirmPassword = 'Passwords do not match';
-  }
-
   if (Object.keys(errors).length > 0) {
     return { errors };
   }
@@ -138,7 +141,7 @@ export async function signUp(formData: { full_name: string; username: string; em
       email: email.toLowerCase(),
       password,
       full_name: full_name.trim(),
-      user_name: username.trim(),
+      user_name: user_name.trim(),
     });
 
     // Store email temporarily for OTP verification

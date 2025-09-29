@@ -155,7 +155,8 @@ export function OTPVerification() {
   return (
     <div className="space-y-6">
       <div className="text-center">
-        <p className="text-gray-600 dark:text-gray-400">
+        <h2 className="text-3xl font-bold text-gray-900 dark:text-gray-100">Verify Your Email</h2>
+        <p className="mt-2 text-gray-600 dark:text-gray-50">
           We&apos;ve sent a 6-digit code to <strong>{maskedEmail}</strong>
         </p>
       </div>

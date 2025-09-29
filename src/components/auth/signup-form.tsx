@@ -26,7 +26,12 @@ export function SignupForm() {
   async function onSubmit(data: SignupFormData) {
     setIsLoading(true);
     try {
-      const result = await signUp(data);
+      const result = await signUp({
+        full_name: data.full_name,
+        user_name: data.username, // Map username to user_name
+        email: data.email,
+        password: data.password,
+      });
       if (result?.errors) {
         if (result.errors.general) {
           showToast({
